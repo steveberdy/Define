@@ -21,8 +21,9 @@ namespace Define
                 var text = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                 var definitions = JsonConvert.DeserializeObject<DictionaryResponse[]>(text);
 
-                foreach (var def in definitions)
+                for (int i = 0; i < definitions.Length; i++)
                 {
+                    var def = definitions[i];
                     Console.Write("\"" + def.Word + "\" ");
                     Console.WriteLine(string.IsNullOrEmpty(def.Phonetic) ? string.Join(" ", def.Phonetics.Select(x => x.Text).Where(x => !string.IsNullOrEmpty(x))) : def.Phonetic);
 
@@ -37,8 +38,14 @@ namespace Define
                             if (definition.Antonyms.Any()) Console.WriteLine("      ant - " + string.Join(", ", definition.Antonyms));
                         }
                     }
-                    Console.WriteLine();
+
+                    if (i < definitions.Length - 1)
+                    {
+                        Console.WriteLine();
+                        Console.ReadKey();
+                    }
                 }
+                Console.WriteLine();
             });
             rootCommand.Invoke(args);
         }
