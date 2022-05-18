@@ -19,7 +19,18 @@ namespace Define
             {
                 var response = await new HttpClient().GetAsync($"https://api.dictionaryapi.dev/api/v2/entries/en/{word}").ConfigureAwait(false);
                 var text = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                var definitions = JsonConvert.DeserializeObject<DictionaryResponse[]>(text);
+                DictionaryResponse[] definitions;
+                try
+                {
+                    definitions = JsonConvert.DeserializeObject<DictionaryResponse[]>(text);
+                }
+                catch (JsonSerializationException)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Word not found");
+                    Console.ResetColor();
+                    return;
+                }
 
                 for (int i = 0; i < definitions.Length; i++)
                 {
